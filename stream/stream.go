@@ -86,7 +86,7 @@ func (s stream[T]) Filter(predicate func(any) bool) stream[T] {
 	return FromSlice(source)
 }
 
-func (s stream[T]) Map(function func(T) ) stream[R] {
+func (s stream[T]) Map(function func(T) any) stream[any] {
 	source := make([]any, 0)
 
 	for _, v := range s.data {
