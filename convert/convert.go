@@ -44,3 +44,14 @@ func ToInt64(value any) (int64, error) {
 		return result, err
 	}
 }
+
+// Play:
+// ToMap convert a slice of structs to a map based on interatee function.
+func ToMap[T any, K comparable, V any](array []T, iteratee func(T) (K, V)) map[K]V {
+	result := make(map[K]V, len(array))
+	for _, item := range array {
+		k, v := iteratee(item)
+		result[k] = v
+	}
+	return result
+}
