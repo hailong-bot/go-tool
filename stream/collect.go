@@ -1,18 +1,18 @@
 package stream
 
-type Collector interface {
-	Accumulate(any)
-	Result() any
+type Collector[T any] interface {
+	Accumulate(T)
+	Result() T
 }
 
-type ToCollection struct {
-	slice []interface{}
+type ToCollection[T any] struct {
+	slice []T
 }
 
-func (c *ToCollection) Accumulate(item any) {
+func (c *ToCollection[T]) Accumulate(item T) {
 	c.slice = append(c.slice, item)
 }
 
-func (c *ToCollection) Result() any {
+func (c *ToCollection[T]) Result() []T {
 	return c.slice
 }

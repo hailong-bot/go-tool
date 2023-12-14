@@ -86,8 +86,8 @@ func (s stream[T]) Filter(predicate func(T) bool) stream[T] {
 	return FromSlice(source)
 }
 
-func (s stream[T]) Map(function func(T) any) stream[any] {
-	source := make([]any, 0)
+func (s stream[T]) Map(function func(T) T) stream[T] {
+	source := make([]T, 0)
 
 	for _, v := range s.data {
 		convertV := function(v)
@@ -96,7 +96,7 @@ func (s stream[T]) Map(function func(T) any) stream[any] {
 	return FromSlice(source)
 }
 
-func (s stream[T]) Collect(collect Collector) any {
+func (s stream[T]) Collect(collect Collector[T]) any {
 	for _, item := range s.data {
 		collect.Accumulate(item)
 	}
