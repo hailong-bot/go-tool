@@ -29,10 +29,10 @@ func Generate[T any](generator func() func() (item T, ok bool)) stream[T] {
 	source := make([]T, 0)
 
 	var zeroValue T
-	for next, item, ok := generator(), zeroValue, true; ok; {
-		item, ok = next()
+	for next, ok := generator(), true; ok; {
+		zeroValue, ok = next()
 		if ok {
-			source = append(source, item)
+			source = append(source, zeroValue)
 		}
 	}
 	return FromSlice(source)
@@ -74,7 +74,7 @@ func hashKey(data any) string {
 }
 
 // Filter returns a stream consisting of the elements of this stream that match the given predicate.
-func (s stream[T]) Filter(predicate func(any) bool) stream[T] {
+func (s stream[T]) Filter(predicate func(T) bool) stream[T] {
 	source := make([]T, 0)
 
 	for _, v := range s.data {
@@ -94,4 +94,11 @@ func (s stream[T]) Map(function func(T) any) stream[any] {
 		source = append(source, convertV)
 	}
 	return FromSlice(source)
+}
+
+func (s stream[T]) Collect(collect Collector) any {
+	for _, item := range s.data {
+		collect.Accumulate(item)
+	}
+	return collect.Result()
 }
