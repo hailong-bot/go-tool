@@ -29,3 +29,20 @@ func TestToMap(t *testing.T) {
 
 	fmt.Println(result)
 }
+
+func TestToAny(t *testing.T) {
+	t.Parallel()
+	type Person struct {
+		Name string `json:"name"`
+		Age  int64  `json:"age"`
+	}
+	ps := []any{
+		Person{Name: "test", Age: 18},
+	}
+	var result []Person
+	err := Convert(ps, &result)
+	if err != nil {
+		fmt.Println("error")
+	}
+
+}

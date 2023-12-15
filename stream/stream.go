@@ -102,3 +102,10 @@ func (s stream[T]) Collect(collect Collector) any {
 	}
 	return collect.Result()
 }
+
+// ForEach consume slices
+func (s stream[T]) ForEach(consumer func(item T)) {
+	for _, v := range s.data {
+		consumer(v)
+	}
+}
