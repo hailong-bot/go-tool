@@ -22,6 +22,6 @@ func Test1(t *testing.T) {
 		p.Age++
 		p.Name = "change Name"
 		return p
-	}).Collect(&ToCollection[Person]{})
+	}).Collect(&ToCollection{})
 	fmt.Println("res", res)
 }

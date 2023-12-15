@@ -96,7 +96,7 @@ func (s stream[T]) Map(function func(T) T) stream[T] {
 	return FromSlice(source)
 }
 
-func (s stream[T]) Collect(collect Collector[T]) any {
+func (s stream[T]) Collect(collect Collector) any {
 	for _, item := range s.data {
 		collect.Accumulate(item)
 	}
