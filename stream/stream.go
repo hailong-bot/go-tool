@@ -3,6 +3,8 @@ package stream
 import (
 	"bytes"
 	"encoding/gob"
+
+	"github.com/hailong-bot/go-tool/v2/slice"
 )
 
 type stream[T any] struct {
@@ -108,4 +110,142 @@ func (s stream[T]) ForEach(consumer func(item T)) {
 	for _, v := range s.data {
 		consumer(v)
 	}
+}
+
+// Reduce performs a reduction on the elements of the stream, using an associative accumation function, and returs an Optional describing the reduce value, if any
+// Play:
+func (s stream[T]) Reduce(initial T, accmulator func(a, b T) T) T {
+	for _, v := range s.data {
+		initial = accmulator(initial, v)
+	}
+	return initial
+}
+
+// Count return stream's length
+func (s stream[T]) Count() int {
+	return len(s.data)
+}
+
+// FindFirst returns the first element of this stream and true, or zero value and false if the stream is empty.
+func (s stream[T]) FindFirst() (T, bool) {
+	var result T
+
+	if s.data == nil && len(s.data) == 0 {
+		return result, false
+	}
+	return s.data[0], true
+}
+
+// FindLast returns the last element of this stream and true, or zero value and false if the stream is empty.
+func (s stream[T]) FindLast() (T, bool) {
+	var result T
+
+	if s.data == nil && len(s.data) == 0 {
+		return result, false
+	}
+
+	return s.data[len(s.data)-1], true
+}
+
+// Reverse returns a stream whose elements are reverse order of given stream.
+func (s stream[T]) Reverse() stream[T] {
+	l := len(s.data)
+	source := make([]T, l)
+
+	for i := 0; i < l; i++ {
+		source[i] = s.data[l-1-i]
+	}
+	return FromSlice(source)
+}
+
+// Range returns a stream whose elements are in the range from start(included) to end(excluded) original stream.
+// Play:
+func (s stream[T]) Range(start, end int) stream[T] {
+	if start < 0 {
+		start = 0
+	}
+	if end < 0 {
+		end = 0
+	}
+	if start >= end {
+		return FromSlice([]T{})
+	}
+
+	result := make([]T, 0)
+	if end > len(s.data) {
+		end = len(s.data)
+	}
+
+	for i := start; i < end; i++ {
+		result = append(result, s.data[i])
+	}
+	return FromSlice(result)
+}
+
+func (s stream[T]) Sorted(compartor func(a, b T) bool) stream[T] {
+	source := []T{}
+	source = append(source, s.data...)
+	slice.SortBy(source, compartor)
+	return FromSlice(source)
+}
+
+// Play:
+// Max returs the maximum element of the stream according to the provided comprator function
+func (s stream[T]) Max(comprator func(a, b T) bool) (T, bool) {
+	var max T
+
+	if len(s.data) == 0 {
+		return max, false
+	}
+
+	for i, v := range s.data {
+		if comprator(v, max) || i == 0 {
+			max = v
+		}
+	}
+
+	return max, true
+}
+
+// Play:
+// Min returns the minimun element of this stream according to the provided comprator function
+func (s stream[T]) Min(comprator func(a, b T) bool) (T, bool) {
+	var min T
+	if len(s.data) == 0 {
+		return min, false
+	}
+	for i, v := range s.data {
+		if comprator(v, min) || i == 0 {
+			min = v
+		}
+	}
+	return min, true
+}
+
+// AnyMatch return whether any elements of this stream match the provided predicate function
+// Play
+func (s stream[T]) AnyMatch(predicate func(item T) bool) bool {
+	for _, v := range s.data {
+		if predicate(v) {
+			return true
+		}
+	}
+	return false
+}
+
+// AllMatch return whether all elements of the stream match the provided predicate function
+// Play:
+func (s stream[T]) AllMatch(predicate func(item T) bool) bool {
+	for _, v := range s.data {
+		if !predicate(v) {
+			return false
+		}
+	}
+	return true
+}
+
+// NoneMatch return whether no elements of this stream match the provided predicate function
+// Play:
+func (s stream[T]) NoneMatch(predicate func(item T) bool) bool {
+	return !s.AnyMatch(predicate)
 }
