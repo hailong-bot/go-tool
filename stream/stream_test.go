@@ -3,8 +3,6 @@ package stream
 import (
 	"fmt"
 	"testing"
-
-	"github.com/hailong-bot/go-tool/v2/convert"
 )
 
 func Test1(t *testing.T) {
@@ -30,11 +28,5 @@ func Test1(t *testing.T) {
 		}
 		return p
 	}).Distinct().Collect(&ToCollection{})
-
-	var result []Person
-	err := convert.Convert(res, &result)
-	if err != nil {
-		fmt.Println("error")
-	}
-	fmt.Println("res", result)
+	fmt.Println(res)
 }
