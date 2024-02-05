@@ -64,7 +64,6 @@ func (s stream[T]) Distinct() stream[T] {
 	return FromSlice(source)
 }
 
-// Distinct returns a stream that removes the duplicated items.
 func hashKey(data any) string {
 	buffer := bytes.NewBuffer(nil)
 	encoder := gob.NewEncoder(buffer)
