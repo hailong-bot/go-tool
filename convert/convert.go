@@ -9,7 +9,7 @@ import (
 	"github.com/hailong-bot/go-tool/v2/structs"
 )
 
-// Play:
+// Play: https://go.dev/play/p/Qsvk3PbWuix
 // ToJsonString convert value to json string
 func ToJsonString(value any) (string, error) {
 	result, err := json.Marshal(value)
@@ -19,7 +19,7 @@ func ToJsonString(value any) (string, error) {
 	return string(result), nil
 }
 
-// Play:
+// Play: https://go.dev/play/p/ZzJbCe-BoOy
 // ToInt64 convert value to int64 value , if input is not numerical, return 0 and err
 func ToInt64(value any) (int64, error) {
 	v := reflect.ValueOf(value)
